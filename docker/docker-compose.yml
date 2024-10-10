@@ -1,0 +1,9 @@
+services:
+  app:
+    container_name: mechvibes
+    build:
+      context: ..
+      # Relative to where it's being run from, which should be root
+      dockerfile: docker/Dockerfile
+    ports:
+      - "3000:3000"

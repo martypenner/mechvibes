@@ -1,0 +1,9 @@
+services:
+  app:
+    extends:
+      file: docker-compose.yml
+      service: app
+    build:
+      target: production
+    environment:
+      - NODE_ENV=production

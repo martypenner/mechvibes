@@ -103,6 +103,7 @@
   "devDependencies": {
     "electron": "^12.2.3",
     "electron-builder": "^24.13.3",
+    "electron-builder-squirrel-windows": "^24.1.0",
     "tinybench": "^2.9.0",
     "vitest": "^2.1.2"
   }
