@@ -12,6 +12,7 @@ const glob = require('glob');
 const path = require('path');
 const { platform } = process;
 const { GetFileFromArchive } = require('./libs/soundpacks/file-manager');
+const { playSound } = require('./utils/play_sound');
 
 const MV_PACK_LSID = remote.getGlobal("current_pack_store_id");
 const MV_VOL_LSID = 'mechvibes-volume';
@@ -466,7 +467,7 @@ function packsToOptions(packs, pack_list) {
       }
       if(current_pack) {
         const sound_id = `keycode-${keycode}-up`;
-        playSound(sound_id, volume.value);
+        playSound(sound_id, volume.value, current_pack);
         // log.silly(`Keycode: ${keycode} up`)
       }
 
@@ -496,7 +497,7 @@ function packsToOptions(packs, pack_list) {
       // get loaded audio object
       // if object valid, pack volume and play sound
       if (current_pack) {
-        playSound(sound_id, volume.value);
+        playSound(sound_id, volume.value, current_pack);
       }
     });
 
@@ -528,40 +529,3 @@ function packsToOptions(packs, pack_list) {
   });
 })(window, document);
 
-// ==================================================
-// universal play function
-function playSound(sound_id, volume) {
-  if(current_pack.audio === undefined){
-    // sound for this pack hasn't been loaded
-    return;
-  }
-  const play_type = current_pack.key_define_type ? current_pack.key_define_type : 'single';
-  const sound = play_type == 'single' ? current_pack.audio : current_pack.audio[sound_id];
-  if (!sound) {
-    return;
-  }
-
-  if(active_volume){
-    // dynamic volume adjustment
-    log.silly(`Volume: ${volume}`);
-    log.silly(`System Volume: ${system_volume}`);
-
-    const adjustedVolume = volume * (100 / system_volume);
-
-    log.silly(`Adjusted Volume: ${adjustedVolume}`);
-    log.silly(`Result Volume: ${adjustedVolume / 100}`);
-
-    sound.volume(1);
-    Howler.masterGain.gain.setValueAtTime(Number(adjustedVolume / 100), Howler.ctx.currentTime);
-  }else{
-    sound.volume(1);
-    Howler.masterGain.gain.setValueAtTime(Number(volume / 100), Howler.ctx.currentTime);
-  }
-
-  if (play_type == 'single') {
-    sound.play(sound_id);
-    console.log(current_pack.audio);
-  } else {
-    sound.play();
-  }
-}
